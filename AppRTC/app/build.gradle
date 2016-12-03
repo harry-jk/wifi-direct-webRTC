@@ -1,0 +1,40 @@
+apply plugin: 'com.android.library'
+
+android {
+  compileSdkVersion 23
+  buildToolsVersion "23.0.3"
+  publishNonDefault true
+
+  sourceSets.main {
+    jniLibs.srcDir 'libs'
+    jni.srcDirs = [] //disable automatic ndk-build call
+  }
+
+
+  defaultConfig {
+    minSdkVersion 16
+    targetSdkVersion 21
+
+    versionCode 13665
+    versionName "r13665"
+
+    testApplicationId "org.appspot.apprtc.test"
+    testInstrumentationRunner "android.test.InstrumentationTestRunner"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled true
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+}
+
+dependencies {
+  compile files('libs/autobanh.jar')
+  compile files('libs/libjingle_peerconnection.jar')
+}

@@ -1,0 +1,2 @@
+include ':app', ':rtc'
+project(':rtc').projectDir = new File('AppRTC/app')
