@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc.model;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.model;
 
 /**
  * Created by jinhy on 2016-11-22.

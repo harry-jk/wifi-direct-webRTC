@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc;
 
 import android.content.Context;
 import android.os.Environment;
@@ -21,13 +21,11 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
-import org.webrtc.RtpSender;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import org.webrtc.StatsObserver;
 import org.webrtc.StatsReport;
 import org.webrtc.VideoCapturer;
-import org.webrtc.VideoCapturerAndroid;
 import org.webrtc.VideoRenderer;
 import org.webrtc.VideoSource;
 import org.webrtc.VideoTrack;
@@ -38,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executors;

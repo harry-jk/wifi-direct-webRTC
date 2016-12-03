@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc.net.server;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.net.server;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -28,8 +28,8 @@ import org.webrtc.StatsReport;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import kr.skyserv.lab.wifi_direct_webrtc.PeerConnectionClient;
-import kr.skyserv.lab.wifi_direct_webrtc.receiver.WifiDirectBroadcastReceiver;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.receiver.WifiDirectBroadcastReceiver;
 
 /**
  * Created by jinhy on 2016-11-22.

@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc.net.server;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.net.server;
 
 import android.os.Handler;
 

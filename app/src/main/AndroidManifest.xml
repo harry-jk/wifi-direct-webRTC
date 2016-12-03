@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="kr.skyserv.lab.wifi_direct_webrtc"
+    package="kr.ac.jejunu.ncl.wifi_direct_webrtc"
     >
 
     <uses-feature android:name="android.hardware.camera"/>

@@ -1,6 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc;
-
-import android.util.Log;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc;
 
 import java.net.NetworkInterface;
 import java.util.Collections;

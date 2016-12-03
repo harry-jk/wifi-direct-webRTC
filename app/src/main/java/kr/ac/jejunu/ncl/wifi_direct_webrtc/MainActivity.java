@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc;
 
 import android.Manifest;
 import android.app.ActivityManager;
@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -33,8 +32,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import kr.skyserv.lab.wifi_direct_webrtc.model.User;
-import kr.skyserv.lab.wifi_direct_webrtc.net.server.Server;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.server.Server;
 
 public class MainActivity extends AppCompatActivity
         implements PeerConnectionClient.PeerConnectionEvents,

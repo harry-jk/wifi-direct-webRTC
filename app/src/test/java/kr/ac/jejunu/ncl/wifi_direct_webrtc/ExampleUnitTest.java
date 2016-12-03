@@ -1,4 +1,4 @@
-package kr.skyserv.lab.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc;
 
 import org.junit.Test;
 
