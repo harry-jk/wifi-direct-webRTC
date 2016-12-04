@@ -1,4 +1,4 @@
-package kr.ac.jejunu.ncl.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.util;
 
 import java.net.NetworkInterface;
 import java.util.Collections;

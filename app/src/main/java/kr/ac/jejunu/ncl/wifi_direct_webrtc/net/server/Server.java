@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.Params;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.receiver.WifiDirectBroadcastReceiver;
 
 /**
@@ -36,66 +37,9 @@ import kr.ac.jejunu.ncl.wifi_direct_webrtc.receiver.WifiDirectBroadcastReceiver;
  */
 
 public class Server extends Service
-        implements AppRTCClient.SignalingEvents, PeerConnectionClient.PeerConnectionEvents {
+        implements Params, AppRTCClient.SignalingEvents, PeerConnectionClient.PeerConnectionEvents {
     private final IBinder mBinder = new LocalBinder();
 
-    public static final String EXTRA_ROOMID =
-            "org.appspot.apprtc.ROOMID";
-    public static final String EXTRA_LOOPBACK =
-            "org.appspot.apprtc.LOOPBACK";
-    public static final String EXTRA_VIDEO_CALL =
-            "org.appspot.apprtc.VIDEO_CALL";
-    public static final String EXTRA_CAMERA2 =
-            "org.appspot.apprtc.CAMERA2";
-    public static final String EXTRA_VIDEO_WIDTH =
-            "org.appspot.apprtc.VIDEO_WIDTH";
-    public static final String EXTRA_VIDEO_HEIGHT =
-            "org.appspot.apprtc.VIDEO_HEIGHT";
-    public static final String EXTRA_VIDEO_FPS =
-            "org.appspot.apprtc.VIDEO_FPS";
-    public static final String EXTRA_VIDEO_CAPTUREQUALITYSLIDER_ENABLED =
-            "org.appsopt.apprtc.VIDEO_CAPTUREQUALITYSLIDER";
-    public static final String EXTRA_VIDEO_BITRATE =
-            "org.appspot.apprtc.VIDEO_BITRATE";
-    public static final String EXTRA_VIDEOCODEC =
-            "org.appspot.apprtc.VIDEOCODEC";
-    public static final String EXTRA_HWCODEC_ENABLED =
-            "org.appspot.apprtc.HWCODEC";
-    public static final String EXTRA_CAPTURETOTEXTURE_ENABLED =
-            "org.appspot.apprtc.CAPTURETOTEXTURE";
-    public static final String EXTRA_AUDIO_BITRATE =
-            "org.appspot.apprtc.AUDIO_BITRATE";
-    public static final String EXTRA_AUDIOCODEC =
-            "org.appspot.apprtc.AUDIOCODEC";
-    public static final String EXTRA_NOAUDIOPROCESSING_ENABLED =
-            "org.appspot.apprtc.NOAUDIOPROCESSING";
-    public static final String EXTRA_AECDUMP_ENABLED =
-            "org.appspot.apprtc.AECDUMP";
-    public static final String EXTRA_OPENSLES_ENABLED =
-            "org.appspot.apprtc.OPENSLES";
-    public static final String EXTRA_DISABLE_BUILT_IN_AEC =
-            "org.appspot.apprtc.DISABLE_BUILT_IN_AEC";
-    public static final String EXTRA_DISABLE_BUILT_IN_AGC =
-            "org.appspot.apprtc.DISABLE_BUILT_IN_AGC";
-    public static final String EXTRA_DISABLE_BUILT_IN_NS =
-            "org.appspot.apprtc.DISABLE_BUILT_IN_NS";
-    public static final String EXTRA_ENABLE_LEVEL_CONTROL =
-            "org.appspot.apprtc.ENABLE_LEVEL_CONTROL";
-    public static final String EXTRA_DISPLAY_HUD =
-            "org.appspot.apprtc.DISPLAY_HUD";
-    public static final String EXTRA_TRACING = "org.appspot.apprtc.TRACING";
-    public static final String EXTRA_CMDLINE =
-            "org.appspot.apprtc.CMDLINE";
-    public static final String EXTRA_RUNTIME =
-            "org.appspot.apprtc.RUNTIME";
-    private static final String TAG = "CallRTCClient";
-
-    // List of mandatory application permissions.
-    private static final String[] MANDATORY_PERMISSIONS = {
-            "android.permission.MODIFY_AUDIO_SETTINGS",
-            "android.permission.RECORD_AUDIO",
-            "android.permission.INTERNET"
-    };
     private static final int STAT_CALLBACK_PERIOD = 1000;
 
     // Wifi Direct
@@ -190,7 +134,6 @@ public class Server extends Service
 
     private void callConnected() {
         if (peerConnectionClient == null) {
-            Log.w(TAG, "Call is connected in closed or error state");
             return;
         }
         // Enable statistics callback.
@@ -210,7 +153,6 @@ public class Server extends Service
     @Override
     public void onRemoteDescription(SessionDescription sdp) {
         if (peerConnectionClient == null) {
-            Log.e(TAG, "Received remote SDP for non-initilized peer connection.");
             return;
         }
         peerConnectionClient.setRemoteDescription(sdp);
@@ -224,7 +166,6 @@ public class Server extends Service
     @Override
     public void onRemoteIceCandidate(IceCandidate candidate) {
         if (peerConnectionClient == null) {
-            Log.e(TAG, "Received ICE candidate for a non-initialized peer connection.");
             return;
         }
         peerConnectionClient.addRemoteIceCandidate(candidate);
@@ -233,7 +174,6 @@ public class Server extends Service
     @Override
     public void onRemoteIceCandidatesRemoved(IceCandidate[] candidates) {
         if (peerConnectionClient == null) {
-            Log.e(TAG, "Received ICE candidate removals for a non-initialized peer connection.");
             return;
         }
         peerConnectionClient.removeRemoteIceCandidates(candidates);
