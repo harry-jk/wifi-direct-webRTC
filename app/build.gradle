@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
+    useLibrary  'org.apache.http.legacy'
 
     sourceSets.main {
         jniLibs.srcDir 'libs'
@@ -33,7 +34,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     testCompile 'junit:junit:4.12'
     compile 'gun0912.ted:tedpermission:1.0.2'
-
-    releaseCompile project(path: ':rtc', configuration: 'release')
-    debugCompile project(path: ':rtc', configuration: 'debug')
 }

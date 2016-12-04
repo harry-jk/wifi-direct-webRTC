@@ -5,7 +5,6 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-import org.appspot.apprtc.AppRTCClient;
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
 import org.webrtc.Camera1Enumerator;
@@ -42,6 +41,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.ConnectionHandler;
 
 /**
  * Created by jinhy on 2016-11-28.
@@ -100,7 +101,7 @@ public class PeerConnectionClient {
     private VideoRenderer.Callbacks remoteRender;
     public VideoRenderer localRenderer;
     private VideoRenderer remoteRenderer;
-    private AppRTCClient.SignalingParameters signalingParameters;
+    private ConnectionHandler.SignalingParameters signalingParameters;
     private MediaConstraints pcConstraints;
     private int videoWidth;
     private int videoHeight;
@@ -301,7 +302,7 @@ public class PeerConnectionClient {
             final EglBase.Context renderEGLContext,
             final VideoRenderer.Callbacks localRender,
             final VideoRenderer.Callbacks remoteRender,
-            final AppRTCClient.SignalingParameters signalingParameters) {
+            final ConnectionHandler.SignalingParameters signalingParameters) {
         if (peerConnectionParameters == null) {
             Log.e(TAG, "Creating peer connection without initializing factory.");
             return;
@@ -556,7 +557,7 @@ public class PeerConnectionClient {
         if (videoCallEnabled && isServer) {
             if (peerConnectionParameters.useCamera2) {
                 if (!peerConnectionParameters.captureToTexture) {
-                    reportError(context.getString(org.appspot.apprtc.R.string.camera2_texture_only_error));
+                    reportError("");
                     return;
                 }
 
