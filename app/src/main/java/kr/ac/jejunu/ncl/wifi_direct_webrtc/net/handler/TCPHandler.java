@@ -50,6 +50,10 @@ public class TCPHandler extends ConnectionHandler {
             return;
         }
 
+//        if(socket != null) {
+//            socket.disconnect();
+//        }
+
         if (address.isAnyLocalAddress()) {
             socket = new TCPServerSocket(address, port, this);
         } else {

@@ -13,11 +13,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.Params;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.ConnectionHandler;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.PeerHandler;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.TCPHandler;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.util.Util;
 
 /**
  * Created by jinhy on 2016-11-22.
@@ -27,6 +30,8 @@ public class Client implements Params,
         ConnectionHandler.HandleConnection, PeerHandler.HandlePeerConnection {
     private ScheduledExecutorService executor;
 
+    Context context;
+    PeerConnectionClient.PeerConnectionParameters peerConnectionParameters;
     private PeerConnectionClient peerConnectionClient = null;
     ConnectionParameter connectionParameter;
     TCPHandler tcpHandler;
@@ -34,13 +39,12 @@ public class Client implements Params,
 
     private boolean iceConnected;
 
-    private EglBase rootEglBase;
     private SurfaceViewRenderer remoteRenderer;
     private SurfaceViewRenderer localRenderer;
 
-    public Client(Context context, Intent intent, EglBase rootEglBase,
+    public Client(Context context, Intent intent, String ip,
                   SurfaceViewRenderer remoteRenderer, SurfaceViewRenderer localRenderer) {
-        this.rootEglBase = rootEglBase;
+        this.context = context;
         this.remoteRenderer = remoteRenderer;
         this.localRenderer = localRenderer;
         executor = Executors.newSingleThreadScheduledExecutor();
@@ -50,8 +54,7 @@ public class Client implements Params,
 
         boolean useCamera2 = Camera2Enumerator.isSupported()
                 && intent.getBooleanExtra(EXTRA_CAMERA2, false);
-        PeerConnectionClient.PeerConnectionParameters peerConnectionParameters =
-                new PeerConnectionClient.PeerConnectionParameters(
+        peerConnectionParameters = new PeerConnectionClient.PeerConnectionParameters(
                         intent.getBooleanExtra(EXTRA_VIDEO_CALL, true),
                         loopback,
                         tracing,
@@ -77,16 +80,19 @@ public class Client implements Params,
         peerHandler = new PeerHandler(peerConnectionClient, this);
         tcpHandler = new TCPHandler(this, peerHandler);
 
-        connectionParameter = new ConnectionParameter("", "127.0.0.1:8888", loopback);
+        setConnectionParameter("", ip + ":8888", loopback);
 
         if (loopback) {
             PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
             options.networkIgnoreMask = 0;
             peerConnectionClient.setPeerConnectionFactoryOptions(options);
         }
-        peerConnectionClient.createPeerConnectionFactory(
-                context, localRenderer, remoteRenderer,
+        peerConnectionClient.createPeerConnectionFactory(context, localRenderer, remoteRenderer,
                 peerConnectionParameters, tcpHandler);
+    }
+
+    public void setConnectionParameter(String roomUrl, String roomId, boolean loopback) {
+        connectionParameter = new ConnectionParameter(roomUrl, roomId, loopback);
     }
 
     public void startVideo() {
@@ -104,11 +110,11 @@ public class Client implements Params,
     public void disconnect() {
         if (tcpHandler != null) {
             tcpHandler.disconnectFromRoom();
-            tcpHandler = null;
+//            tcpHandler = null;
         }
         if (peerConnectionClient != null) {
             peerConnectionClient.close();
-            peerConnectionClient = null;
+//            peerConnectionClient = null;
         }
     }
 
@@ -117,6 +123,10 @@ public class Client implements Params,
             return;
         }
         // Start room connection.
+
+//        if(peerConnectionClient != null) {
+//            peerConnectionClient.close();
+//        }
         tcpHandler.connectToRoom(connectionParameter);
     }
 
@@ -126,9 +136,20 @@ public class Client implements Params,
     }
 
     @Override
+    public void onConnect() {
+        Global.getInstance().getUser().setIp(Util.getIPAddress(true));
+        tcpHandler.requestUserInfo();
+    }
+
+    @Override
+    public void onRequestUserInfo(User user) {
+        tcpHandler.answerUserInfo();
+    }
+
+    @Override
     public void onConnectedToRoom(ConnectionHandler.SignalingParameters params) {
         setSignalingParameters(params);
-        peerConnectionClient.createPeerConnection(rootEglBase.getEglBaseContext(),
+        peerConnectionClient.createPeerConnection(Global.getInstance().getRootEglBase().getEglBaseContext(),
                 localRenderer, remoteRenderer, params);
 
         if (params.initiator) {

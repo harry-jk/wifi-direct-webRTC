@@ -35,6 +35,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".CallActivity"
+            android:screenOrientation="portrait" />
+
         <service android:name=".net.server.Server" />
 
     </application>

@@ -337,8 +337,10 @@ public class PeerConnectionClient {
         return videoCallEnabled;
     }
 
+    boolean alreadyTrace = false;
     private void createPeerConnectionFactoryInternal(Context context) {
-        if(!isServer) {
+        if(!isServer && alreadyTrace) {
+            alreadyTrace = true;
             PeerConnectionFactory.initializeInternalTracer();
             if (peerConnectionParameters.tracing) {
                 PeerConnectionFactory.startInternalTracingCapture(
@@ -606,39 +608,39 @@ public class PeerConnectionClient {
         Log.d(TAG, "Closing peer connection.");
         statsTimer.cancel();
         if (peerConnection != null) {
-            peerConnection.dispose();
+            peerConnection.close();
             peerConnection = null;
         }
-        Log.d(TAG, "Closing audio source.");
-        if (audioSource != null) {
-            audioSource.dispose();
-            audioSource = null;
-        }
-        Log.d(TAG, "Stopping capture.");
-        if (videoCapturer != null) {
-            try {
-                videoCapturer.stopCapture();
-            } catch(InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            videoCapturer.dispose();
-            videoCapturer = null;
-        }
-        Log.d(TAG, "Closing video source.");
-        if (videoSource != null) {
-            videoSource.dispose();
-            videoSource = null;
-        }
-        Log.d(TAG, "Closing peer connection factory.");
-        if (factory != null) {
-            factory.dispose();
-            factory = null;
-        }
+//        Log.d(TAG, "Closing audio source.");
+//        if (audioSource != null) {
+//            audioSource.dispose();
+//            audioSource = null;
+//        }
+//        Log.d(TAG, "Stopping capture.");
+//        if (videoCapturer != null) {
+//            try {
+//                videoCapturer.stopCapture();
+//            } catch(InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            videoCapturer.dispose();
+//            videoCapturer = null;
+//        }
+//        Log.d(TAG, "Closing video source.");
+//        if (videoSource != null) {
+//            videoSource.dispose();
+//            videoSource = null;
+//        }
+//        Log.d(TAG, "Closing peer connection factory.");
+//        if (factory != null) {
+//            factory.dispose();
+//            factory = null;
+//        }
         options = null;
         Log.d(TAG, "Closing peer connection done.");
         events.onPeerConnectionClosed();
-        PeerConnectionFactory.stopInternalTracingCapture();
-        PeerConnectionFactory.shutdownInternalTracer();
+//        PeerConnectionFactory.stopInternalTracingCapture();
+//        PeerConnectionFactory.shutdownInternalTracer();
     }
 
     public boolean isHDVideo() {

@@ -7,14 +7,20 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import org.webrtc.Camera2Enumerator;
+import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 
+import java.util.LinkedList;
+
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.Params;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.ConnectionHandler;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.PeerHandler;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.handler.TCPHandler;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.util.Util;
 
 /**
  * Created by jinhy on 2016-11-22.
@@ -36,6 +42,7 @@ public class Server extends Service implements Params,
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if(intent == null) return super.onStartCommand(intent, flags, startId);
         boolean loopback = intent.getBooleanExtra(EXTRA_LOOPBACK, false);
         boolean tracing = intent.getBooleanExtra(EXTRA_TRACING, false);
 
@@ -71,16 +78,33 @@ public class Server extends Service implements Params,
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         options.networkIgnoreMask = 0;
         peerConnectionClient.setPeerConnectionFactoryOptions(options);
-        peerConnectionClient.createPeerConnectionFactory(
-                Server.this, null, null, peerConnectionParameters, tcpHandler);
+        peerConnectionClient.createPeerConnectionFactory(Server.this, null, null, peerConnectionParameters, tcpHandler);
 
         ConnectionParameter connectionParameter = new ConnectionParameter("", "0.0.0.0:8888", false);
         tcpHandler.connectToRoom(connectionParameter);
+        ConnectionHandler.SignalingParameters params = new ConnectionHandler.SignalingParameters(
+                // Ice servers are not needed for direct connections.
+                new LinkedList<PeerConnection.IceServer>(),
+                true, // Server side acts as the initiator on direct connections.
+                null, // clientId
+                null, // wssUrl
+                null, // wwsPostUrl
+                null, // offerSdp
+                null // iceCandidates
+        );
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
+        if (tcpHandler != null) {
+            tcpHandler.disconnectFromRoom();
+            tcpHandler = null;
+        }
+        if (peerConnectionClient != null) {
+            peerConnectionClient.close();
+            peerConnectionClient = null;
+        }
         super.onDestroy();
     }
 
@@ -99,9 +123,21 @@ public class Server extends Service implements Params,
     }
 
     @Override
+    public void onConnect() {
+        Global.getInstance().getUser().setIp(Util.getIPAddress(true));
+        tcpHandler.requestUserInfo();
+    }
+
+    @Override
+    public void onRequestUserInfo(User user) {
+        tcpHandler.answerUserInfo();
+    }
+
+    @Override
     public void onConnectedToRoom(ConnectionHandler.SignalingParameters params) {
         setSignalingParameters(params);
-        peerConnectionClient.createPeerConnection(null, null, null, params);
+        peerConnectionClient.createPeerConnection(Global.getInstance().getRootEglBase().getEglBaseContext(),
+                null, null, params);
         peerConnectionClient.createOffer();
     }
 

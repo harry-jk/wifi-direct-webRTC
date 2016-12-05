@@ -83,12 +83,14 @@ public class TCPServerSocket extends TCPSocket {
 
     @Override
     public void run() {
-        connect();
         // Receive connection to temporary variable first, so we don't block.
         while (true) {
             Socket rawSocket = null;
+            if(serverSocket == null) {
+                connect();
+            }
             try {
-                rawSocket = serverSocket.accept();
+                if(serverSocket != null) rawSocket = serverSocket.accept();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -109,7 +111,7 @@ public class TCPServerSocket extends TCPSocket {
                                 out = new PrintWriter(finalRawSocket.getOutputStream(), true);
                                 in = new BufferedReader(new InputStreamReader(finalRawSocket.getInputStream()));
                             } catch (IOException e) {
-                                channelEvent.onError("Failed to open IO on rawSocket: " + e.getMessage());
+//                                channelEvent.onError("Failed to open IO on rawSocket: " + e.getMessage());
                                 return;
                             }
                         }
@@ -133,7 +135,7 @@ public class TCPServerSocket extends TCPSocket {
                                     }
                                 }
 
-                                channelEvent.onError("Failed to read from rawSocket: " + e.getMessage());
+//                                channelEvent.onError("Failed to read from rawSocket: " + e.getMessage());
                                 break;
                             }
 

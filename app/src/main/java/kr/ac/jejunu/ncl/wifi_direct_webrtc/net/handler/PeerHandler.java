@@ -4,6 +4,7 @@ import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 
 /**
  * Created by jinhy on 2016-12-04.
@@ -66,6 +67,7 @@ public class PeerHandler implements TCPHandler.HandleProtocol {
     }
 
     public interface HandlePeerConnection {
+        void onConnect();
         void onConnectedToRoom(ConnectionHandler.SignalingParameters params);
         void onChannelClose();
         void onChannelError(String description);

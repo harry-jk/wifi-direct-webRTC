@@ -14,8 +14,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.protocol.RTCProtocol;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.protocol.WiFiP2PProtocol;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.socket.Socket;
 
 /**
@@ -30,12 +33,16 @@ public abstract class ConnectionHandler
     protected Socket socket;
 
     protected RTCProtocol rtcProtocol;
+    protected WiFiP2PProtocol p2pProtocol;
     protected HandleConnection handleConnection;
     protected SignalingParameters signalingParameters;
+    protected boolean isServer;
 
     public ConnectionHandler(HandleConnection handleConnection, HandleProtocol handleProtocol) {
         rtcProtocol = new RTCProtocol();
+        p2pProtocol = new WiFiP2PProtocol();
         rtcProtocol.setRoomState(RTCProtocol.ConnectionState.NEW);
+        isServer = false;
         this.executor = Executors.newSingleThreadExecutor();
         this.handleProtocol = handleProtocol;
         this.handleConnection = handleConnection;
@@ -66,6 +73,26 @@ public abstract class ConnectionHandler
         });
     }
 
+    public void requestUserInfo() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject json = p2pProtocol.getRequestUserInfo(Global.getInstance().getUser());
+                if(json != null) socket.send(json.toString());
+            }
+        });
+    }
+
+    public void answerUserInfo() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject json = p2pProtocol.getAnswerUserInfo(Global.getInstance().getUser());
+                if(json != null) socket.send(json.toString());
+            }
+        });
+    }
+
     protected void connect() {
         rtcProtocol.setRoomState(RTCProtocol.ConnectionState.NEW);
         socket.start();
@@ -75,9 +102,8 @@ public abstract class ConnectionHandler
         rtcProtocol.setRoomState(RTCProtocol.ConnectionState.CLOSED);
         if(socket != null) {
             socket.disconnect();
-            socket = null;
+//            socket = null;
         }
-        executor.shutdown();
     }
 
     @Override
@@ -140,20 +166,9 @@ public abstract class ConnectionHandler
 
     @Override
     public void onConnected(boolean isServer) {
+        this.isServer = isServer;
         if (isServer) {
-            rtcProtocol.setRoomState(RTCProtocol.ConnectionState.CONNECTED);
-
-            SignalingParameters parameters = new SignalingParameters(
-                    // Ice servers are not needed for direct connections.
-                    new LinkedList<PeerConnection.IceServer>(),
-                    isServer, // Server side acts as the initiator on direct connections.
-                    null, // clientId
-                    null, // wssUrl
-                    null, // wwsPostUrl
-                    null, // offerSdp
-                    null // iceCandidates
-            );
-            handleProtocol.onConnectedToRoom(parameters);
+            handleConnection.onConnect();
         }
     }
 
@@ -162,21 +177,21 @@ public abstract class ConnectionHandler
         try {
             JSONObject json = new JSONObject(message);
             String type = json.optString("type");
-            if (type.equals("candidate")) {
+            if(type.equals("candidate")) {
                 handleProtocol.onRemoteIceCandidate(RTCProtocol.toJavaCandidate(json));
-            } else if (type.equals("remove-candidates")) {
+            } else if(type.equals("remove-candidates")) {
                 JSONArray candidateArray = json.getJSONArray("candidates");
                 IceCandidate[] candidates = new IceCandidate[candidateArray.length()];
-                for (int i = 0; i < candidateArray.length(); ++i) {
+                for(int i = 0; i < candidateArray.length(); ++i) {
                     candidates[i] = RTCProtocol.toJavaCandidate(candidateArray.getJSONObject(i));
                 }
                 handleProtocol.onRemoteIceCandidatesRemoved(candidates);
-            } else if (type.equals("answer")) {
+            } else if(type.equals("answer")) {
                 SessionDescription sdp = new SessionDescription(
                         SessionDescription.Type.fromCanonicalForm(type),
                         json.getString("sdp"));
                 handleProtocol.onRemoteDescription(sdp);
-            } else if (type.equals("offer")) {
+            } else if(type.equals("offer")) {
                 SessionDescription sdp = new SessionDescription(
                         SessionDescription.Type.fromCanonicalForm(type),
                         json.getString("sdp"));
@@ -192,6 +207,28 @@ public abstract class ConnectionHandler
                         null // iceCandidates
                 );
                 rtcProtocol.setRoomState(RTCProtocol.ConnectionState.CONNECTED);
+                handleProtocol.onConnectedToRoom(parameters);
+            } else if(type.equals("p2p-request")) {
+                String key = json.getString("key");
+                String name = json.getString("name");
+                String ip = json.getString("ip");
+                User user = new User(key);
+                user.setName(name);
+                user.setIp(ip);
+                handleConnection.onRequestUserInfo(user);
+            } else if(type.equals("p2p-answer")) {
+                rtcProtocol.setRoomState(RTCProtocol.ConnectionState.CONNECTED);
+
+                SignalingParameters parameters = new SignalingParameters(
+                        // Ice servers are not needed for direct connections.
+                        new LinkedList<PeerConnection.IceServer>(),
+                        isServer, // Server side acts as the initiator on direct connections.
+                        null, // clientId
+                        null, // wssUrl
+                        null, // wwsPostUrl
+                        null, // offerSdp
+                        null // iceCandidates
+                );
                 handleProtocol.onConnectedToRoom(parameters);
             } else {
                 handleProtocol.onChannelError("JSON parsing error : " + message);
@@ -211,7 +248,7 @@ public abstract class ConnectionHandler
         handleProtocol.onChannelClose();
     }
 
-    public class SignalingParameters {
+    public static class SignalingParameters {
         public final List<PeerConnection.IceServer> iceServers;
         public final boolean initiator;
         public final String clientId;
@@ -245,6 +282,8 @@ public abstract class ConnectionHandler
     }
 
     public interface HandleConnection {
+        void onConnect();
+        void onRequestUserInfo(User user);
         void onIceConnected();
         void onIceDisconnected();
     }
