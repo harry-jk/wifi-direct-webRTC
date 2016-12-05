@@ -142,7 +142,7 @@ public class CallActivity extends AppCompatActivity {
             remoteRenderer.release();
             remoteRenderer = null;
         }
-        stopService(new Intent(this, Server.class));
+//        stopService(new Intent(this, Server.class));
         super.onDestroy();
     }
 

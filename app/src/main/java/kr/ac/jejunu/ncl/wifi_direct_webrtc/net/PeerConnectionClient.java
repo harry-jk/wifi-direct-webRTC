@@ -600,36 +600,36 @@ public class PeerConnectionClient {
     }
 
     private void closeInternal() {
-        if (factory != null && peerConnectionParameters.aecDump) {
-            factory.stopAecDump();
-        }
+//        if (factory != null && peerConnectionParameters.aecDump) {
+//            factory.stopAecDump();
+//        }
         Log.d(TAG, "Closing peer connection.");
         statsTimer.cancel();
         if (peerConnection != null) {
             peerConnection.close();
             peerConnection = null;
         }
-//        Log.d(TAG, "Closing audio source.");
-//        if (audioSource != null) {
-//            audioSource.dispose();
-//            audioSource = null;
-//        }
-//        Log.d(TAG, "Stopping capture.");
-//        if (videoCapturer != null) {
-//            try {
-//                videoCapturer.stopCapture();
-//            } catch(InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            videoCapturer.dispose();
-//            videoCapturer = null;
-//        }
-//        Log.d(TAG, "Closing video source.");
-//        if (videoSource != null) {
-//            videoSource.dispose();
-//            videoSource = null;
-//        }
-//        Log.d(TAG, "Closing peer connection factory.");
+        Log.d(TAG, "Closing audio source.");
+        if (audioSource != null) {
+            audioSource.dispose();
+            audioSource = null;
+        }
+        Log.d(TAG, "Stopping capture.");
+        if (videoCapturer != null) {
+            try {
+                videoCapturer.stopCapture();
+            } catch(InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            videoCapturer.dispose();
+            videoCapturer = null;
+        }
+        Log.d(TAG, "Closing video source.");
+        if (videoSource != null) {
+            videoSource.dispose();
+            videoSource = null;
+        }
+        Log.d(TAG, "Closing peer connection factory.");
 //        if (factory != null) {
 //            factory.dispose();
 //            factory = null;

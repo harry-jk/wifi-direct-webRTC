@@ -23,9 +23,16 @@ public class TCPServerSocket extends TCPSocket {
     public void connect() {
         final ServerSocket tempSocket;
         try {
-            tempSocket = new ServerSocket(port, 0, address);
+            tempSocket = new ServerSocket();
+            tempSocket.setReuseAddress(true);
+            tempSocket.bind(new InetSocketAddress(port));
         } catch (IOException e) {
             channelEvent.onError("Failed to create server socket: " + e.getMessage());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
             return;
         }
 
@@ -90,9 +97,14 @@ public class TCPServerSocket extends TCPSocket {
                 connect();
             }
             try {
-                if(serverSocket != null) rawSocket = serverSocket.accept();
+                if(serverSocket != null) {
+                    rawSocket = serverSocket.accept();
+                } else if(serverSocket == null) {
+                    return;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+                if(serverSocket == null) return;
             }
             if(rawSocket != null) {
                 final Socket finalRawSocket = rawSocket;
