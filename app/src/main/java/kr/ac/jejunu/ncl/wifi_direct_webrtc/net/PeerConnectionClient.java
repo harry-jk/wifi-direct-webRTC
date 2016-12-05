@@ -1,4 +1,4 @@
-package kr.ac.jejunu.ncl.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.net;
 
 import android.content.Context;
 import android.os.Environment;
@@ -339,7 +339,7 @@ public class PeerConnectionClient {
 
     boolean alreadyTrace = false;
     private void createPeerConnectionFactoryInternal(Context context) {
-        if(!isServer && alreadyTrace) {
+        if(!alreadyTrace) {
             alreadyTrace = true;
             PeerConnectionFactory.initializeInternalTracer();
             if (peerConnectionParameters.tracing) {
@@ -556,7 +556,7 @@ public class PeerConnectionClient {
         Logging.enableLogToDebugOutput(Logging.Severity.LS_INFO);
 
         mediaStream = factory.createLocalMediaStream("ARDAMS");
-        if (videoCallEnabled && isServer) {
+        if (videoCallEnabled) {
             if (peerConnectionParameters.useCamera2) {
                 if (!peerConnectionParameters.captureToTexture) {
                     reportError("");
@@ -577,10 +577,8 @@ public class PeerConnectionClient {
 
             mediaStream.addTrack(createVideoTrack(videoCapturer));
         }
+        mediaStream.addTrack(createAudioTrack());
 
-        if(isServer) {
-            mediaStream.addTrack(createAudioTrack());
-        }
         peerConnection.addStream(mediaStream);
 
         if (peerConnectionParameters.aecDump) {
@@ -1109,10 +1107,7 @@ public class PeerConnectionClient {
                     if (stream.videoTracks.size() == 1) {
                         remoteVideoTrack = stream.videoTracks.get(0);
                         remoteVideoTrack.setEnabled(renderVideo);
-                        if(!isServer) {
-                            remoteVideoTrack.addRenderer(remoteRenderer);
-//                            remoteVideoTrack.addRenderer(localRenderer);
-                        }
+                        remoteVideoTrack.addRenderer(remoteRenderer);
                     }
                 }
             });

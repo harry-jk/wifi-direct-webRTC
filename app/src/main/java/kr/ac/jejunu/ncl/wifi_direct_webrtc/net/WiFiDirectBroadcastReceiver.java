@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kr.ac.jejunu.ncl.wifi_direct_webrtc;
+package kr.ac.jejunu.ncl.wifi_direct_webrtc.net;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,6 +25,11 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.util.Log;
+
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.DeviceDetailFragment;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.DeviceListFragment;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.MainActivity;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.R;
 
 /**
  * A BroadcastReceiver that notifies of important wifi p2p events.

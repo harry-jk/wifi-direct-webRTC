@@ -12,7 +12,7 @@ import org.webrtc.PeerConnectionFactory;
 
 import java.util.LinkedList;
 
-import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.PeerConnectionClient;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;

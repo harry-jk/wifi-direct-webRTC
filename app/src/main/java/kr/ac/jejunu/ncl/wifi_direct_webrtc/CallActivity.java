@@ -47,6 +47,7 @@ public class CallActivity extends AppCompatActivity {
     private ScheduledExecutorService executor;
     private Client client;
     private static final String SERVER_IP = "server ip";
+    private static final String IS_SERVER = "is_server";
 
 
     // layouts
@@ -86,7 +87,12 @@ public class CallActivity extends AppCompatActivity {
             public void onPermissionGranted() {
                 Intent intent = getIntent();
                 String ip = intent.getStringExtra(SERVER_IP);
-                client = new Client(CallActivity.this, intent, ip, remoteRenderer, localRenderer);
+                boolean isServer = intent.getBooleanExtra(IS_SERVER, false);
+                if(isServer) {
+                    client = new Client(CallActivity.this, intent, "0.0.0.0", remoteRenderer, localRenderer);
+                } else {
+                    client = new Client(CallActivity.this, intent, ip, remoteRenderer, localRenderer);
+                }
 
                 executor.schedule(new Runnable() {
                     @Override
@@ -111,15 +117,6 @@ public class CallActivity extends AppCompatActivity {
                 Manifest.permission.ACCESS_NETWORK_STATE,
                 Manifest.permission.CHANGE_WIFI_STATE);
         permissionChecker.check();
-
-
-//        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-//        dialogBuilder.setPositiveButton("Join", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//            }
-//        });
-//        dialogBuilder.show();
     }
 
     @Override
@@ -145,7 +142,6 @@ public class CallActivity extends AppCompatActivity {
             remoteRenderer.release();
             remoteRenderer = null;
         }
-        Global.getInstance().getRootEglBase().release();
         stopService(new Intent(this, Server.class));
         super.onDestroy();
     }

@@ -80,13 +80,13 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 				}
 				progressDialog = ProgressDialog.show(getActivity(), "Press back to cancel",
 						"Connecting to :" + device.deviceAddress, true, true
-				// new DialogInterface.OnCancelListener() {
-				//
-				// @Override
-				// public void onCancel(DialogInterface dialog) {
-				// ((DeviceActionListener) getActivity()).cancelDisconnect();
-				// }
-				// }
+						// new DialogInterface.OnCancelListener() {
+						//
+						// @Override
+						// public void onCancel(DialogInterface dialog) {
+						// ((DeviceActionListener) getActivity()).cancelDisconnect();
+						// }
+						// }
 				);
 				((DeviceListFragment.DeviceActionListener) getActivity()).connect(config);
 
@@ -123,12 +123,12 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 		}
 		this.info = info;
 		this.getView().setVisibility(View.VISIBLE);
-		
+
 		// The owner IP is now known.
 		TextView view = (TextView) mContentView.findViewById(R.id.group_owner);
-		
+
 		view.setText("Group owner : " + ((info.isGroupOwner == true) ? "Yes" : "NO"));
-		
+
 		// InetAddress from WifiP2pInfo struct.
 		view = (TextView) mContentView.findViewById(R.id.device_info);
 		view.setText("Group Owner IP : " + info.groupOwnerAddress.getHostAddress());
@@ -154,7 +154,7 @@ public class DeviceDetailFragment extends Fragment implements ConnectionInfoList
 
 	/**
 	 * Updates the UI with device data
-	 * 
+	 *
 	 * @param device
 	 *            the device to be displayed
 	 */

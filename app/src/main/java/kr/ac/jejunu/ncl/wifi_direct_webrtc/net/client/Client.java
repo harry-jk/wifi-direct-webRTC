@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.webrtc.Camera2Enumerator;
-import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SurfaceViewRenderer;
@@ -12,7 +11,7 @@ import org.webrtc.SurfaceViewRenderer;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.PeerConnectionClient;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;

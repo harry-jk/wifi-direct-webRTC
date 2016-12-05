@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import kr.ac.jejunu.ncl.wifi_direct_webrtc.PeerConnectionClient;
+import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.PeerConnectionClient;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.Global;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.model.User;
 import kr.ac.jejunu.ncl.wifi_direct_webrtc.net.ConnectionParameter;
