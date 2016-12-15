@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class MainActivity extends Activity implements ChannelListener, DeviceLis
     private Spinner mResolutionSpinner;
     private EditText mEnterIp;
     private TextView mUserIp;
+    private CheckBox isGroupOwner;
     private WifiP2pManager manager;
     private static String mVideoIP;
     private static final String SERVER_IP = "server ip";
@@ -79,11 +81,15 @@ public class MainActivity extends Activity implements ChannelListener, DeviceLis
     public void showDetails(WifiP2pDevice device) {
         DeviceDetailFragment fragment = (DeviceDetailFragment) getFragmentManager().findFragmentById(R.id.frag_detail);
         fragment.showDetails(device);
-
     }
 
     @Override
     public void connect(WifiP2pConfig config) {
+        if(isGroupOwner.isChecked()) {
+            config.groupOwnerIntent = 15;
+        } else {
+            config.groupOwnerIntent = 0;
+        }
         manager.connect(channel, config, new ActionListener() {
 
             @Override
@@ -178,6 +184,8 @@ public class MainActivity extends Activity implements ChannelListener, DeviceLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        isGroupOwner = (CheckBox) findViewById(R.id.set_group_owner);
 
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);

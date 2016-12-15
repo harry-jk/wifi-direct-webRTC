@@ -31,6 +31,11 @@
         android:layout_height="wrap_content"
         android:padding="4dip"
         android:text="Scan for Devices" />
+    <CheckBox
+        android:id="@+id/set_group_owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Group Owner"/>
 
     <TextView
         android:id="@+id/user_ip"
